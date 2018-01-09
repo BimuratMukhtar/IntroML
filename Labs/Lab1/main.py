@@ -12,7 +12,11 @@ def check_reviews_data(reviews_data):
 def check_toy_data(toy_data, toy_labels):
     assert toy_data.shape == (200, 2)
     assert toy_labels.shape == (200,)
-    assert np.array_equal(np.sum(toy_data, axis=0), np.array([ 185.6102,  202.9751]))
+    # print(type(np.sum(toy_data, axis=0)))
+    # print(np.sum(toy_data, axis=0))
+    # print(np.sum(toy_data, axis=0) == np.array([ 185.6102,  202.9751]))
+    # print(185.6102 == 185.6102)
+    assert np.allclose(np.sum(toy_data, axis=0), np.array([ 185.6102,  202.9751]))
     assert set(toy_labels) == {-1.0, 1.0}
 
 if __name__ == '__main__':
