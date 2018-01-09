@@ -4,6 +4,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from sklearn import metrics
 
+
 ### Part 1 - Perceptron Algorithm
 
 def perceptron_single_step_update(feature_vector, label, current_theta, current_theta_0):
@@ -23,10 +24,11 @@ def perceptron_single_step_update(feature_vector, label, current_theta, current_
         real valued number with the value of theta_0 after the current updated has
         completed.
     """
+    current_theta = current_theta + label*feature_vector
+    current_theta_0 = current_theta_0 + label
+    return current_theta, current_theta_0
 
-    raise NotImplementedError
-
-def perceptron(feature_matrix, labels, T=5):
+def perceptron(feature_matrix, labels, T = 5):
     """Runs the average perceptron algorithm on a given set of data.
 
     Arguments:
@@ -42,8 +44,21 @@ def perceptron(feature_matrix, labels, T=5):
         the average theta and the second element is a real number with the
         value of the average theta_0.
     """
+    current_theta = np.zeros(feature_matrix.shape[1])
+    current_theta_o = 0
+    theta_sum = np.zeros(feature_matrix.shape[1])
+    theta_0_sum = 0
+    number_rows = feature_matrix.shape[0]
+    for t in range(T):
+        for row_index in range(0, number_rows):
+            x_i = feature_matrix[row_index]
+            y_i = labels[row_index]
+            if y_i*(np.dot(current_theta, x_i) + current_theta_o) <= 0:
+                current_theta, current_theta_o = perceptron_single_step_update(x_i, y_i, current_theta, current_theta_o)
+            theta_sum = theta_sum + current_theta
+            theta_0_sum = theta_0_sum + current_theta_o
 
-    raise NotImplementedError
+    return theta_sum/(number_rows*T), theta_0_sum/(number_rows*T)
 
 ### Part 2 - Classifying Reviews
 
@@ -61,8 +76,13 @@ def classify(feature_matrix, theta, theta_0=0):
         classification of the kth row of the feature matrix using the given theta
         and theta_0.
     """
+    ft = np.c_[feature_matrix, np.ones(feature_matrix.shape[0])]
+    my_theta = np.r_[theta, theta_0]
+    mul = np.matmul(ft, my_theta)
+    sign = np.sign(mul)
+    sign[sign == 0] = -1
+    return sign
 
-    raise NotImplementedError
 
 def accuracy(feature_matrix, labels, theta, theta_0=0):
     """Determines the accuracy of a linear classifier.
@@ -79,7 +99,7 @@ def accuracy(feature_matrix, labels, theta, theta_0=0):
         The accuracy of the model on the provided data.
     """
 
-    raise NotImplementedError
+    return metrics.accuracy_score(labels, classify(feature_matrix, theta, theta_0))
 
 ### Part 3 - Improving the Model
 
@@ -104,8 +124,13 @@ def tune(Ts, train_feature_matrix, train_labels, val_feature_matrix, val_labels)
         parameter value and the second element is an ndarray of validation accuracies
         for each parameter value.
     """
-
-    raise NotImplementedError
+    tr = []
+    vl = []
+    for t in Ts:
+        theta, theta_0 = perceptron(train_feature_matrix, train_labels, t)
+        tr.append(accuracy(train_feature_matrix, train_labels, theta, theta_0))
+        vl.append(accuracy(val_feature_matrix, val_labels, theta, theta_0))
+    return np.array(tr), np.array(vl)
 
 def extract_words(input_string):
     """Returns a list of lowercase words in the string.

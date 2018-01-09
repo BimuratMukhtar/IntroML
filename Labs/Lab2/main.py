@@ -30,22 +30,22 @@ test_final_features = lab2.extract_final_features(test_texts, dictionary)
 #-------------------------------------------------------------------------------
 
 # toy_features, toy_labels = utils.load_toy_data('../../Data/toy_data.csv')
-
+#
 # theta, theta_0 = lab2.perceptron(toy_features, toy_labels, T=5)
-
+#
 # utils.plot_toy_results(toy_features, toy_labels, theta, theta_0)
 
 #-------------------------------------------------------------------------------
 # Part 2 - Classifying Reviews
 #-------------------------------------------------------------------------------
 
-# theta, theta_0 = lab2.perceptron(train_bow_features, train_labels, T=5)
+theta, theta_0 = lab2.perceptron(train_bow_features, train_labels, T=5)
 
-# train_accuracy = lab2.accuracy(train_bow_features, train_labels, theta, theta_0)
-# val_accuracy = lab2.accuracy(val_bow_features, val_labels, theta, theta_0)
+train_accuracy = lab2.accuracy(train_bow_features, train_labels, theta, theta_0)
+val_accuracy = lab2.accuracy(val_bow_features, val_labels, theta, theta_0)
 
-# print("Training accuracy: {:.4f}".format(train_accuracy))
-# print("Validation accuracy: {:.4f}".format(val_accuracy))
+print("Training accuracy: {:.4f}".format(train_accuracy))
+print("Validation accuracy: {:.4f}".format(val_accuracy))
 
 #-------------------------------------------------------------------------------
 # Part 3 - Improving the Model
@@ -55,11 +55,11 @@ test_final_features = lab2.extract_final_features(test_texts, dictionary)
 # Part 3.1 - Tuning the Hyperparameters
 #-------------------------------------------------------------------------------
 
-# Ts = [1, 5, 10, 15, 20]
+Ts = [1, 5, 10, 15, 20]
 
-# train_accs, val_accs = lab2.tune(Ts, train_bow_features, train_labels, val_bow_features, val_labels)
+train_accs, val_accs = lab2.tune(Ts, train_bow_features, train_labels, val_bow_features, val_labels)
 
-# utils.plot_tune_results(Ts, train_accs, val_accs)
+utils.plot_tune_results(Ts, train_accs, val_accs)
 
 #-------------------------------------------------------------------------------
 # Best T value
