@@ -199,19 +199,75 @@ def extract_bow_feature_vectors(reviews, dictionary):
 
     return feature_matrix
 
-def extract_final_features(reviews, dictionary):
-    """Extracts features from the reviews.
 
-    YOU MAY MODIFY THE PARAMETERS OF THIS FUNCTION.
+class Features:
+    def __init__(self, reviews: list, dictionary: dict, train_reviews: list = None, T_best = 20):
+        self.reviews = list(reviews)
+        self.dictionary = dict(dictionary)
+        self.__c_reviews = list(reviews)
+        self.__c_dictionary = dict(dictionary)
+        if train_reviews is None:
+            self.train_reviews = list(reviews)
+        else:
+            self.train_reviews = list(train_reviews)
+        self.t_best = T_best
+        self.dictionary_count_word = {}
 
-    Arguments:
-        reviews(list): A list of strings with one string for
-            each review (data point).
-        dictionary(dict): A map from words to unique indices.
+    def reset(self):
+        self.reviews = list(self.__c_reviews)
+        self.dictionary = dict(self.__c_dictionary)
+        return self
 
-    Returns:
-        An ndarray of shape (n,m) where n is the number of reviews
-        and m is the number of total features.
-    """
+    def extract(self):
+        return extract_bow_feature_vectors(self.reviews, self.dictionary)
 
-    return extract_bow_feature_vectors(reviews, dictionary)
+    def remove_uncommon(self, treshold=4):
+        dict_with_count_words = self.__get_word_count_dict()
+        dict_with_common_words = {}
+        for word in self.dictionary:
+            if dict_with_count_words[word] > treshold:
+                dict_with_common_words[word] = len(dict_with_common_words)
+        self.dictionary = dict_with_common_words
+        return self
+
+    def remove_stop_words(self):
+        self.dictionary = self.__dict_without_stop(self.dictionary)
+        return self
+
+    def show_most_useful_n_features(self, n=50):
+        self.__get_word_count_dict()
+        s = [(k, self.dictionary_count_word[k])
+             for k in sorted(self.dictionary_count_word, key=self.dictionary_count_word.get, reverse=True)]
+        print("Top " + str(n) + " most explanatory words with count")
+        print(s)
+
+    def __dict_without_stop(self, dictionary: dict) -> dict:
+        dictionary_without_stopwords = {}
+        stopwords = self.__load_stopwords("../../Data/stopwords.txt")
+
+        for word in dictionary.keys():
+            if word not in stopwords:
+                dictionary_without_stopwords[word] = len(dictionary_without_stopwords)
+        return dictionary_without_stopwords
+
+    def __get_word_count_dict(self) -> dict:
+
+        for text in self.train_reviews:
+            word_list = extract_words(text)
+            for word in word_list:
+                if word in self.dictionary:
+                    if word not in self.dictionary_count_word:
+                        self.dictionary_count_word[word] = 1
+                    else:
+                        self.dictionary_count_word[word] = self.dictionary_count_word[word] + 1
+        return self.dictionary_count_word
+
+    @staticmethod
+    def __load_stopwords(path) -> list:
+        file = open(path, "r")
+        return file.read().splitlines()
+
+
+
+
+
