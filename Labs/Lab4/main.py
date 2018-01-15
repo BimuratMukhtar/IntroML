@@ -24,15 +24,15 @@ y_radial = np.array([1 if x1**2 + x2**2 < 1 else -1 for x1, x2 in X])
 y_angular = np.array([1 if (np.arctan2(x[0], x[1]) > np.pi / 6 and np.arctan2(x[0], x[1]) < np.pi / 2) else -1 for x in X])
 
 # Plot the labelled data
-ax1 = plt.subplot(221)
-utils.plot_data(ax1, X, y_linear, title='Linear')
-ax2 = plt.subplot(222)
-utils.plot_data(ax2, X, y_quad, title='Quadratic')
-ax3 = plt.subplot(223)
-utils.plot_data(ax3, X, y_radial, title='Radial')
-ax4 = plt.subplot(224)
-utils.plot_data(ax4, X, y_angular, title='Angular')
-plt.show()
+# ax1 = plt.subplot(221)
+# utils.plot_data(ax1, X, y_linear, title='Linear')
+# ax2 = plt.subplot(222)
+# utils.plot_data(ax2, X, y_quad, title='Quadratic')
+# ax3 = plt.subplot(223)
+# utils.plot_data(ax3, X, y_radial, title='Radial')
+# ax4 = plt.subplot(224)
+# utils.plot_data(ax4, X, y_angular, title='Angular')
+# plt.show()
 
 #-------------------------------------------------------------------------------
 # Part 2 - Linear Models
@@ -66,14 +66,14 @@ plt.show()
 #-------------------------------------------------------------------------------
 
 # def phi_quad(x):
-#     raise NotImplementedError
-
+#     return np.array([np.square(x[0]), x[1]])
+#
 # X_quad = np.array([phi_quad(x) for x in X])
-
+#
 # clf = svm.SVC(kernel='linear')
 # clf.fit(X_quad, y_quad)
-
-
+#
+#
 # ax1 = plt.subplot(221)
 # utils.plot_data(ax1, X, y_quad, title='Original data')
 # ax3 = plt.subplot(223)
@@ -105,13 +105,13 @@ plt.show()
 #-------------------------------------------------------------------------------
 
 # def phi_radial(x):
-#     raise NotImplementedError
-
+#     return np.array([x[1], np.square(x[0])+np.square(x[1])])
+#
 # X_radial = np.array([phi_radial(x) for x in X])
-
+#
 # clf = svm.SVC(kernel='linear')
 # clf.fit(X_radial, y_radial)
-
+#
 # ax1 = plt.subplot(221)
 # utils.plot_data(ax1, X, y_radial, title='Original data')
 # ax3 = plt.subplot(223)
@@ -147,13 +147,22 @@ plt.show()
 #-------------------------------------------------------------------------------
 
 # def phi_angular(x):
-#     raise NotImplementedError
+#     mag = np.linalg.norm(x)
+#     return x/mag
 
+
+
+# def phi_angular(x):
+#     # mag = np.linalg.norm(x)
+#     # return x/mag
+#     mn = np.degrees(np.arctan2(x[1], x[0]))
+#     return np.array([mn % 360, x[1]])
+#
 # X_angular = np.array([phi_angular(x) for x in X])
-
+#
 # clf = svm.SVC(kernel='linear')
 # clf.fit(X_angular, y_angular)
-
+#
 # ax1 = plt.subplot(221)
 # utils.plot_data(ax1, X, y_angular, title='Original data')
 # ax3 = plt.subplot(223)
@@ -166,19 +175,19 @@ plt.show()
 # Part 6 - Bonus: k-Nearest Neighbors
 #-------------------------------------------------------------------------------
 
-# # Generate and plot the clustered data
-# X_cluster, y_cluster = make_blobs(n_samples=200, centers=[[0,4], [-4,0], [4,0], [0,-4], [0,0]])
+# Generate and plot the clustered data
+X_cluster, y_cluster = make_blobs(n_samples=200, centers=[[0,4], [-4,0], [4,0], [0,-4], [0,0]])
 
-# ax1 = plt.subplot(331)
-# utils.plot_data(ax1, X_cluster, y_cluster, title='Clusters')
+ax1 = plt.subplot(331)
+utils.plot_data(ax1, X_cluster, y_cluster, title='Clusters')
 
-# # Plot KNN predictions for different values of k
-# for i in trange(8):
-#     k = i + 1
-#     clf = KNeighborsClassifier(n_neighbors=k)
-#     clf.fit(X_cluster, y_cluster)
+# Plot KNN predictions for different values of k
+for i in trange(8):
+    k = i + 1
+    clf = KNeighborsClassifier(n_neighbors=k)
+    clf.fit(X_cluster, y_cluster)
 
-#     axi = plt.subplot(330 + i + 2)
-#     utils.plot_classifier(axi, X_cluster, y_cluster, clf, title='{}-Nearest Neighbors'.format(k))
+    axi = plt.subplot(330 + i + 2)
+    utils.plot_classifier(axi, X_cluster, y_cluster, clf, title='{}-Nearest Neighbors'.format(k))
 
-# plt.show()
+plt.show()
