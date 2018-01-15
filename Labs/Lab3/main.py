@@ -23,7 +23,7 @@ y = np.array([-1] * 50 + [1] * 50)
 assert len(X) == len(y)
 
 # Plot the data
-utils.plot_data(X, y)
+# utils.plot_data(X, y)
 
 # Load reviews data
 train_data = utils.load_reviews_data('../../Data/reviews_train.csv')
@@ -48,24 +48,24 @@ val_texts, val_labels = zip(*((sample['text'], sample['sentiment']) for sample i
 # Part 1.2 - Modifying hyperparameters
 #-------------------------------------------------------------------------------
 
-# # Modify T
-# Ts = [5]
+# Modify T
+# Ts = [5, 10, 15, 20, 25, 30]
 # for index, T in enumerate(Ts):
 #     theta, theta_0 = lab3.pegasos(X, y, T=T, eta=0.01, lam=0.01)
 #     subplot = str(math.ceil(math.sqrt(len(Ts)))) * 2 + str(index + 1)
 #     utils.plot_linear_classifier(X, y, theta, theta_0, title='T = {}'.format(T), subplot=subplot)
 # plt.show()
-
-# # Modify eta
-# etas = [0.01]
+#
+# Modify eta
+# etas = [0.01, 0.02, 0.1, 0.001]
 # for index, eta in enumerate(etas):
 #     theta, theta_0 = lab3.pegasos(X, y, T=20, eta=eta, lam=0.01)
 #     subplot = str(math.ceil(math.sqrt(len(etas)))) * 2 + str(index + 1)
 #     utils.plot_linear_classifier(X, y, theta, theta_0, title='eta = {}'.format(eta), subplot=subplot)
 # plt.show()
-
-# # Modify lambda
-# lams = [0.01]
+#
+# Modify lambda
+# lams = [0.01, 0.02, 0.1, 0.001]
 # for index, lam in enumerate(lams):
 #     theta, theta_0 = lab3.pegasos(X, y, T=20, eta=0.01, lam=lam)
 #     subplot = str(math.ceil(math.sqrt(len(lams)))) * 2 + str(index + 1)
@@ -94,13 +94,13 @@ val_texts, val_labels = zip(*((sample['text'], sample['sentiment']) for sample i
 #     ('svm', svm.SVC(kernel='linear'))
 # ])
 # pipeline.fit(train_texts, train_labels)
-
+#
 # train_predictions = pipeline.predict(train_texts)
 # train_accuracy = metrics.accuracy_score(train_labels, train_predictions)
-
+#
 # val_predictions = pipeline.predict(val_texts)
 # val_accuracy = metrics.accuracy_score(val_labels, val_predictions)
-
+#
 # print('SVM training accuracy = {}'.format(train_accuracy))
 # print('SVM validation accuracy = {}'.format(val_accuracy))
 
@@ -108,24 +108,24 @@ val_texts, val_labels = zip(*((sample['text'], sample['sentiment']) for sample i
 # Part 3 - Grid Search
 #-------------------------------------------------------------------------------
 
-# pipeline = Pipeline([
-#     ('vect', CountVectorizer()),
-#     ('svm', svm.SVC(kernel='linear'))
-# ])
-# param_grid = [{
-#     'svm__C': [1.0, 0.1, 0.01, 0.0001],
-#     'svm__kernel': ['linear', 'poly', 'rbf']
-# }]
+pipeline = Pipeline([
+    ('vect', CountVectorizer()),
+    ('svm', svm.SVC(kernel='linear'))
+])
+param_grid = [{
+    'svm__C': [1.0, 0.1, 0.01, 0.0001],
+    'svm__kernel': ['linear']
+}]
 
-# clf = GridSearchCV(pipeline, param_grid=param_grid)
-# clf.fit(train_texts, train_labels)
+clf = GridSearchCV(pipeline, param_grid=param_grid)
+clf.fit(train_texts, train_labels)
 
-# print()
-# print('SVM grid search results')
-# print()
+print()
+print('SVM grid search results')
+print()
 
-# for C, kernel, accuracy in zip(clf.cv_results_['param_svm__C'], clf.cv_results_['param_svm__kernel'], clf.cv_results_['mean_test_score']):
-#     print('C = {}, kernel = {}, accuracy = {}'.format(C, kernel, accuracy))
+for C, kernel, accuracy in zip(clf.cv_results_['param_svm__C'], clf.cv_results_['param_svm__kernel'], clf.cv_results_['mean_test_score']):
+    print('C = {}, kernel = {}, accuracy = {}'.format(C, kernel, accuracy))
 
-# print()
-# print('Best: C = {}, kernel = {}, accuracy = {}'.format(clf.best_params_['svm__C'], clf.best_params_['svm__kernel'], clf.best_score_))
+print()
+print('Best: C = {}, kernel = {}, accuracy = {}'.format(clf.best_params_['svm__C'], clf.best_params_['svm__kernel'], clf.best_score_))
