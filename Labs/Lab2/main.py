@@ -89,6 +89,7 @@ theta, theta_0 = lab2.perceptron(train_bow_features, train_labels, T_best)
 word_list = sorted(dictionary.keys(), key=lambda word: dictionary[word])
 sorted_words = utils.most_explanatory_words(theta, word_list)
 
+
 print("Top 100 most explanatory words")
 print(sorted_words[:100])
 
@@ -100,6 +101,7 @@ theta, theta_0 = lab2.perceptron(train_bow_features, train_labels, T_best)
 
 train_accuracy = lab2.accuracy(train_bow_features, train_labels, theta, theta_0)
 val_accuracy = lab2.accuracy(val_bow_features, val_labels, theta, theta_0)
+
 
 print("Bag-of-words features")
 print("Training accuracy: {:.4f}".format(train_accuracy))
@@ -137,6 +139,7 @@ print("Validation accuracy: {:.4f}".format(val_accuracy))
 # val_accuracy = lab2.accuracy(val_final_features, val_labels, theta, theta_0)
 # test_accuracy = lab2.accuracy(test_final_features, test_labels, theta, theta_0)
 
+# print()
 # print("Training accuracy: {:.4f}".format(train_accuracy))
 # print("Validation accuracy: {:.4f}".format(val_accuracy))
 # print("Test accuracy: {:.4f}".format(test_accuracy))
