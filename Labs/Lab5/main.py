@@ -14,6 +14,7 @@ iris = load_breast_cancer()
 X_train, X_test, y_train, y_test = train_test_split(
     iris.data, iris.target, test_size=0.2, random_state=42)
 
+
 #-------------------------------------------------------------------------------
 # Part 2 - Decision Tree Classifier
 #-------------------------------------------------------------------------------
@@ -22,12 +23,14 @@ X_train, X_test, y_train, y_test = train_test_split(
 # Part 2.1 - Building and Training a Decision Tree Classifier
 #-------------------------------------------------------------------------------
 
+
 # dt = DecisionTreeClassifier(random_state=42)
 # dt.fit(X_train, y_train)
 
 #-------------------------------------------------------------------------------
 # Part 2.2 - Evaluating the Decision Tree Classifier
 #-------------------------------------------------------------------------------
+
 
 # train_predictions = dt.predict(X_train)
 # train_accuracy = accuracy_score(y_train, train_predictions)

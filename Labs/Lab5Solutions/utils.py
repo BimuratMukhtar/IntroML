@@ -1,13 +1,8 @@
 from sklearn.tree import export_graphviz
 from subprocess import Popen
-<<<<<<< HEAD
-from PIL import Image
-
-=======
 from tempfile import NamedTemporaryFile
 
 from scipy.misc import imread, imshow
->>>>>>> 066eb490ca438c487a395738c808b0762caeadd5
 
 def sort_features(feature_names, feature_importances):
     """Sorts features by importance.
@@ -36,13 +31,13 @@ def display_decision_tree(tree, feature_names, class_names):
         class_names(list): A list of the names of the classes.
     """
 
-    export_graphviz(decision_tree=tree,
-                    out_file="tree.dot",
-                    feature_names=feature_names,
-                    class_names=class_names,
-                    filled=True,
-                    rounded=True)
-
-    Popen(['dot', '-Tpng', "tree.dot", '-o', "tree.png"]).wait()
-    img = Image.open('tree.png')
-    img.show()
+    with NamedTemporaryFile(suffix='.dot') as dot_file:
+        export_graphviz(decision_tree=tree,
+                        out_file=dot_file.name,
+                        feature_names=feature_names,
+                        class_names=class_names,
+                        filled=True,
+                        rounded=True)
+        with NamedTemporaryFile(suffix='.png') as png_file:
+            Popen(['dot', '-Tpng', dot_file.name, '-o', png_file.name]).wait()
+            imshow(imread(png_file.name))
