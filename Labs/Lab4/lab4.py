@@ -47,9 +47,20 @@ class KernelPerceptron(BaseEstimator, ClassifierMixin):
 
         # Kernel perceptron algorithm
         # YOUR CODE GOES HERE
-
+        for t in range(self.T):
+            for i in range(n):
+                arr = []
+                x_i = self.X_[i]
+                y_i = self.y_[i]
+                for j in range(0, n):
+                    a_j = self.alpha[j]
+                    y_j = self.y_[j]
+                    x_j = self.X_[j]
+                    arr.append(a_j*y_j*self.kernel(x_j, x_i))
+                if np.sign(sum(arr)) != y_i:
+                    self.alpha[i] = self.alpha[i] + 1
         # END OF YOUR CODE
-        
+
         return self
 
     def predict(self, X):
@@ -76,6 +87,15 @@ class KernelPerceptron(BaseEstimator, ClassifierMixin):
         # Generate predictions
         # YOUR CODE GOES HERE
 
+        for i in trange(n):
+            arr = []
+            x_i = X[i]
+            for j in range(0, n_):
+                a_j = self.alpha[j]
+                y_j = self.y_[j]
+                x_j = self.X_[j]
+                arr.append(a_j*y_j*self.kernel(x_j, x_i))
+            predictions[i] = np.sign(sum(arr))
         # END OF YOUR CODE
 
         return predictions

@@ -39,22 +39,22 @@ y_angular = np.array([1 if (np.arctan2(x[0], x[1]) > np.pi / 6 and np.arctan2(x[
 #-------------------------------------------------------------------------------
 
 # def linear_kernel(x_j, x_i):
-#     raise NotImplementedError
-
+#     return np.dot(x_i, x_j)
+#
 # clf = lab4.KernelPerceptron(kernel=linear_kernel)
 # clf.fit(X, y_linear)
-
+#
 # ax1 = plt.subplot(121)
 # utils.plot_classifier(ax1, X, y_linear, clf, title='Linear Perceptron')
-
-
-
+#
+#
+#
 # clf = svm.SVC(kernel='linear')
 # clf.fit(X, y_linear)
-
+#
 # ax2 = plt.subplot(122)
 # utils.plot_classifier(ax2, X, y_linear, clf, title='Linear SVM')
-
+#
 # plt.show()
 
 #-------------------------------------------------------------------------------
@@ -87,11 +87,11 @@ y_angular = np.array([1 if (np.arctan2(x[0], x[1]) > np.pi / 6 and np.arctan2(x[
 #-------------------------------------------------------------------------------
 
 # def quad_kernel(x_j, x_i):
-#     raise NotImplementedError
-
+#     return np.square(np.dot(x_i, x_j)) + 2*np.dot(x_i, x_j) + 1
+#
 # clf = lab4.KernelPerceptron(kernel=quad_kernel)
 # clf.fit(X, y_quad)
-
+#
 # ax = plt.gca()
 # utils.plot_classifier(ax, X, y_quad, clf, title='Quadratic Perceptron')
 # plt.show()
@@ -124,23 +124,23 @@ y_angular = np.array([1 if (np.arctan2(x[0], x[1]) > np.pi / 6 and np.arctan2(x[
 # Part 4.2 - Radial Kernel
 #-------------------------------------------------------------------------------
 
-# def radial_kernel(x_j, x_i):
-#     raise NotImplementedError
+def radial_kernel(x_j, x_i):
+    return np.exp(np.linalg.norm(x_j - x_i)**2 / 2)
 
-# clf = lab4.KernelPerceptron(kernel=radial_kernel)
-# clf.fit(X, y_radial)
+clf = lab4.KernelPerceptron(kernel=radial_kernel)
+clf.fit(X, y_radial)
 
-# ax1 = plt.subplot(121)
-# utils.plot_classifier(ax1, X, y_radial, clf, title='RBF Perceptron')
+ax1 = plt.subplot(121)
+utils.plot_classifier(ax1, X, y_radial, clf, title='RBF Perceptron')
 
 
-# clf = svm.SVC(kernel='rbf')
-# clf.fit(X, y_radial)
+clf = svm.SVC(kernel='rbf')
+clf.fit(X, y_radial)
 
-# ax2 = plt.subplot(122)
-# utils.plot_classifier(ax2, X, y_radial, clf, title='RBF SVM')
+ax2 = plt.subplot(122)
+utils.plot_classifier(ax2, X, y_radial, clf, title='RBF SVM')
 
-# plt.show()
+plt.show()
 
 #-------------------------------------------------------------------------------
 # Part 5 - Angle Models
@@ -176,18 +176,18 @@ y_angular = np.array([1 if (np.arctan2(x[0], x[1]) > np.pi / 6 and np.arctan2(x[
 #-------------------------------------------------------------------------------
 
 # Generate and plot the clustered data
-X_cluster, y_cluster = make_blobs(n_samples=200, centers=[[0,4], [-4,0], [4,0], [0,-4], [0,0]])
-
-ax1 = plt.subplot(331)
-utils.plot_data(ax1, X_cluster, y_cluster, title='Clusters')
+# X_cluster, y_cluster = make_blobs(n_samples=200, centers=[[0,4], [-4,0], [4,0], [0,-4], [0,0]])
+#
+# ax1 = plt.subplot(331)
+# utils.plot_data(ax1, X_cluster, y_cluster, title='Clusters')
 
 # Plot KNN predictions for different values of k
-for i in trange(8):
-    k = i + 1
-    clf = KNeighborsClassifier(n_neighbors=k)
-    clf.fit(X_cluster, y_cluster)
-
-    axi = plt.subplot(330 + i + 2)
-    utils.plot_classifier(axi, X_cluster, y_cluster, clf, title='{}-Nearest Neighbors'.format(k))
-
-plt.show()
+# for i in trange(8):
+#     k = i + 1
+#     clf = KNeighborsClassifier(n_neighbors=k)
+#     clf.fit(X_cluster, y_cluster)
+#
+#     axi = plt.subplot(330 + i + 2)
+#     utils.plot_classifier(axi, X_cluster, y_cluster, clf, title='{}-Nearest Neighbors'.format(k))
+#
+# plt.show()
