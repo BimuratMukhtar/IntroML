@@ -182,12 +182,12 @@ plt.show()
 # utils.plot_data(ax1, X_cluster, y_cluster, title='Clusters')
 
 # Plot KNN predictions for different values of k
-# for i in trange(8):
-#     k = i + 1
-#     clf = KNeighborsClassifier(n_neighbors=k)
-#     clf.fit(X_cluster, y_cluster)
-#
-#     axi = plt.subplot(330 + i + 2)
-#     utils.plot_classifier(axi, X_cluster, y_cluster, clf, title='{}-Nearest Neighbors'.format(k))
-#
-# plt.show()
+for i in trange(8):
+    k = i + 1
+    clf = KNeighborsClassifier(n_neighbors=k)
+    clf.fit(X_cluster, y_cluster)
+
+    axi = plt.subplot(330 + i + 2)
+    utils.plot_classifier(axi, X_cluster, y_cluster, clf, title='{}-Nearest Neighbors'.format(k))
+
+plt.show()

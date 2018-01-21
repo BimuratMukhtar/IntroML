@@ -1,13 +1,7 @@
 from sklearn.tree import export_graphviz
 from subprocess import Popen
-<<<<<<< HEAD
 from PIL import Image
 
-=======
-from tempfile import NamedTemporaryFile
-
-from scipy.misc import imread, imshow
->>>>>>> 066eb490ca438c487a395738c808b0762caeadd5
 
 def sort_features(feature_names, feature_importances):
     """Sorts features by importance.
