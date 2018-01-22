@@ -3,9 +3,10 @@ from itertools import product
 import numpy as np
 from tqdm import tqdm, trange
 
-#-------------------------------------------------------------------------------
+
+# -------------------------------------------------------------------------------
 # Part 1 - Naive Recommendation Algorithm
-#-------------------------------------------------------------------------------
+# -------------------------------------------------------------------------------
 
 def predict_ratings_naive(Y):
     """Uses a naive algorithm for predicting movie ratings.
@@ -32,7 +33,7 @@ def predict_ratings_naive(Y):
 
     for i in trange(num_movies):
         # Determine known ratings for movie i
-        movie_ratings = Y[:,i]
+        movie_ratings = Y[:, i]
         known_movie_ratings = movie_ratings[np.where(movie_ratings != -1)]
 
         if len(known_movie_ratings) != 0:
@@ -43,22 +44,23 @@ def predict_ratings_naive(Y):
         # Assign ratings for this movie for each user
         for a in range(num_users):
             # If user has rated the movie, just use that rating
-            if Y[a,i] != -1:
-                X[a,i] = Y[a,i]
+            if Y[a, i] != -1:
+                X[a, i] = Y[a, i]
 
             # Otherwise use the average movie rating if it exists
             elif average_movie_rating != -1:
-                X[a,i] = average_movie_rating
+                X[a, i] = average_movie_rating
 
             # Otherwise default to average rating overall
             else:
-                X[a,i] = average_rating
+                X[a, i] = average_rating
 
     return X
 
-#-------------------------------------------------------------------------------
+
+# -------------------------------------------------------------------------------
 # Part 2 - Nearest-Neighbor Prediction
-#-------------------------------------------------------------------------------
+# -------------------------------------------------------------------------------
 
 def compute_user_similarity(Y, a, b):
     """Computes the similarity between two users.
@@ -104,8 +106,8 @@ def compute_user_similarity(Y, a, b):
     # Compute covariance and variances
     cov = np.dot(movie_ratings_common_a - mean_movie_rating_common_a,
                  movie_ratings_common_b - mean_movie_rating_common_b)
-    var_a = np.sqrt(np.sum((movie_ratings_common_a - mean_movie_rating_common_a)**2))
-    var_b = np.sqrt(np.sum((movie_ratings_common_b - mean_movie_rating_common_b)**2))
+    var_a = np.sqrt(np.sum((movie_ratings_common_a - mean_movie_rating_common_a) ** 2))
+    var_b = np.sqrt(np.sum((movie_ratings_common_b - mean_movie_rating_common_b) ** 2))
 
     # Return 0 if one of the variances is 0 because then a and b are uncorrelated
     if var_a == 0 or var_b == 0:
@@ -115,6 +117,7 @@ def compute_user_similarity(Y, a, b):
     similarity = cov / (var_a * var_b)
 
     return similarity
+
 
 def compute_user_similarity_matrix(Y):
     """Computes a matrix of similarities between users.
@@ -140,10 +143,11 @@ def compute_user_similarity_matrix(Y):
     S = np.ones((num_users, num_users))
 
     for a in trange(num_users):
-        for b in range(a+1, num_users):
-            S[a,b] = S[b,a] = compute_user_similarity(Y, a, b)
+        for b in range(a + 1, num_users):
+            S[a, b] = S[b, a] = compute_user_similarity(Y, a, b)
 
     return S
+
 
 def compute_knn(Y, S, k, a, i):
     """Determines the k users most similar to user a who have seen movie i.
@@ -173,17 +177,18 @@ def compute_knn(Y, S, k, a, i):
     """
 
     # Determine which users (who are not a) who have seen movie i
-    users_seen_i = np.where(Y[:,i] != -1)[0]
-    users_seen_i = np.delete(users_seen_i, np.where(users_seen_i == a))# np.setdiff1d(users_seen_i, [a])
+    users_seen_i = np.where(Y[:, i] != -1)[0]
+    users_seen_i = np.delete(users_seen_i, np.where(users_seen_i == a))  # np.setdiff1d(users_seen_i, [a])
 
     # Get the top k users ordered by similarity
     if len(users_seen_i) > k:
-        top_k_indices = np.argpartition(S[a,users_seen_i], -k)[-k:]
+        top_k_indices = np.argpartition(S[a, users_seen_i], -k)[-k:]
         knn = users_seen_i[top_k_indices]
     else:
         knn = users_seen_i
 
     return knn
+
 
 def predict_ratings_nn(Y, S, KNN):
     """Predict ratings using nearest neighbor prediction.
@@ -212,16 +217,17 @@ def predict_ratings_nn(Y, S, KNN):
 
     for a in trange(num_users):
         for i in range(num_movies):
-            similar_users_deviation = np.dot(S[a,KNN[(a,i)]],
-                                             Y[KNN[(a,i)],i] - user_mean_movie_ratings[KNN[(a,i)]])
-            total_similarity = np.sum(np.abs(S[a,KNN[(a,i)]]))
+            similar_users_deviation = np.dot(S[a, KNN[(a, i)]],
+                                             Y[KNN[(a, i)], i] - user_mean_movie_ratings[KNN[(a, i)]])
+            total_similarity = np.sum(np.abs(S[a, KNN[(a, i)]]))
 
             if total_similarity == 0:
-                X[a,i] = user_mean_movie_ratings[a]
+                X[a, i] = user_mean_movie_ratings[a]
             else:
-                X[a,i] = user_mean_movie_ratings[a] + similar_users_deviation / total_similarity
+                X[a, i] = user_mean_movie_ratings[a] + similar_users_deviation / total_similarity
 
     return X
+
 
 def predict_ratings_nearest_neighbor(Y, k=10):
     """Uses user similarity to make a nearest neighbor prediction.
@@ -252,18 +258,19 @@ def predict_ratings_nearest_neighbor(Y, k=10):
     S = compute_user_similarity_matrix(Y)
 
     # Determine k most similar users to user a who have seen movie i for every user a and movie i
-    KNN = {(a,i): compute_knn(Y, S, k, a, i) for a, i in tqdm(product(range(num_users),
-                                                                      range(num_movies)),
-                                                              total=num_users*num_movies)}
-    
+    KNN = {(a, i): compute_knn(Y, S, k, a, i) for a, i in tqdm(product(range(num_users),
+                                                                       range(num_movies)),
+                                                               total=num_users * num_movies)}
+
     # Predict ratings
     X = predict_ratings_nn(Y, S, KNN)
 
     return X
 
-#-------------------------------------------------------------------------------
+
+# -------------------------------------------------------------------------------
 # Part 3 - Matrix Factorization
-#-------------------------------------------------------------------------------
+# -------------------------------------------------------------------------------
 
 def optimize_U(R, M, num_users, nf, lam):
     """Optimizes the U matrix for matrix factorization.
@@ -285,20 +292,21 @@ def optimize_U(R, M, num_users, nf, lam):
     U = np.zeros((nf, num_users))
 
     for i in range(num_users):
-        Ii = np.where(R[i] != -1)[0] # movies rated by user i
-        MIi = M[:,Ii] # columns of M.T (movies) for which user i has given a rating
-        nui = len(Ii) # number of movies rated by user i
-        E = np.eye(nf) # identify matrix of size nf x nf
+        Ii = np.where(R[i] != -1)[0]  # movies rated by user i
+        MIi = M[:, Ii]  # columns of M.T (movies) for which user i has given a rating
+        nui = len(Ii)  # number of movies rated by user i
+        E = np.eye(nf)  # identify matrix of size nf x nf
 
         Ai = np.dot(MIi, MIi.T) + lam * nui * E
 
-        RiIi = R[i,Ii] # ith row vector of R but only with entries from columns rated by user i
+        RiIi = R[i, Ii]  # ith row vector of R but only with entries from columns rated by user i
 
         Vi = np.dot(MIi, RiIi.T)
 
-        U[:,i] = np.dot(np.linalg.inv(Ai), Vi)
+        U[:, i] = np.dot(np.linalg.inv(Ai), Vi)
 
     return U
+
 
 def optimize_M(R, U, num_movies, nf, lam):
     """Optimizes the M matrix for matrix factorization.
@@ -320,21 +328,22 @@ def optimize_M(R, U, num_movies, nf, lam):
     M = np.zeros((nf, num_movies))
 
     for j in range(num_movies):
-        Ij = np.where(R[:,j] != -1)[0] # users who rated movie j
-        UIj = U[:,Ij] # columns of U.T (users) who have rated movie j
-        nmj = len(Ij) # number of users who rated movie j
-        E = np.eye(nf) # identify matrix of size nf x nf
+        Ij = np.where(R[:, j] != -1)[0]  # users who rated movie j
+        UIj = U[:, Ij]  # columns of U.T (users) who have rated movie j
+        nmj = len(Ij)  # number of users who rated movie j
+        E = np.eye(nf)  # identify matrix of size nf x nf
 
         Aj = np.dot(UIj, UIj.T) + lam * nmj * E
 
-        RIjj = R[Ij,j] # jth column vector of R but only with entries from rows which rated movie j
-        RIjj = RIjj.reshape(RIjj.size,1)
+        RIjj = R[Ij, j]  # jth column vector of R but only with entries from rows which rated movie j
+        RIjj = RIjj.reshape(RIjj.size, 1)
 
         Vj = np.dot(UIj, RIjj).flatten()
 
-        M[:,j] = np.dot(np.linalg.pinv(Aj), Vj)
+        M[:, j] = np.dot(np.linalg.pinv(Aj), Vj)
 
     return M
+
 
 # http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.173.2797&rep=rep1&type=pdf
 def predict_ratings_matrix_factorization(R, nf=1, lam=0.05, T=10):

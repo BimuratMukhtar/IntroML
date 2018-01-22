@@ -83,13 +83,13 @@ def predict_ratings_nearest_neighbor(user_to_movie_ratings, k=10):
         else:
             return 0.0
 
-    # t_ar = np.loadtxt("array.txt")
-    t_ar = [[0]]
+    t_ar = np.loadtxt("array.txt")
+    # t_ar = [[0]]
     if len(t_ar[0]) == number_of_users:
         S = t_ar
     else:
         for user_i in trange(number_of_users):
-            for user_j in range(user_i+1, number_of_users):
+            for user_j in range(user_i, number_of_users):
                 S[user_j, user_i] = S[user_i, user_j] = get_correlation(user_i, user_j)
         np.savetxt("array.txt", S)
     sorted_indexes = np.argsort(S)[:, ::-1]
@@ -97,20 +97,21 @@ def predict_ratings_nearest_neighbor(user_to_movie_ratings, k=10):
     def get_k_nearest_user_indexes_rated_movie(nearest_user_indixes, k, movie):
         return nearest_user_indixes[user_to_movie_ratings[nearest_user_indixes, movie] != -1][:k]
 
+    user_mean_movie_ratings = np.zeros(number_of_users)
+    for a in range(number_of_users):
+        user_mean_movie_ratings[a] = np.mean(user_to_movie_ratings[a][np.where(user_to_movie_ratings[a] != -1)])
+
     for user_a in trange(number_of_users):
-        user_a_average_rating_all_movie = np.average(user_to_movie_ratings[user_a, user_to_movie_ratings[user_a] > -1])
+        user_a_average_rating_all_movie = user_mean_movie_ratings[user_a]
         for movie in range(number_of_movies):
             knn = get_k_nearest_user_indexes_rated_movie(sorted_indexes[user_a], k, movie)
-            sum_down = np.sum(np.take(S[user_a], knn, axis=0))
-            sum_up = 0
-            for user_b in knn:
-                user_b_rts = user_to_movie_ratings[user_b]
-                sum_up += S[user_a, user_b]*(user_b_rts[movie]
-                                             - np.average(user_b_rts[user_b_rts > -1]))
-            if sum_down != 0:
-                X[user_a, movie] = user_a_average_rating_all_movie + sum_up/sum_down
-            else:
+            similarities = np.take(S[user_a], knn, axis=0)
+            total_similarity = np.sum(np.abs(similarities))
+            similar_users_deviation = np.dot(similarities, user_to_movie_ratings[knn, movie] - user_mean_movie_ratings[knn])
+            if total_similarity == 0:
                 X[user_a, movie] = user_a_average_rating_all_movie
+            else:
+                X[user_a, movie] = user_a_average_rating_all_movie + similar_users_deviation / total_similarity
     return X
 
 
