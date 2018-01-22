@@ -38,6 +38,9 @@ Y_train, Y_test = utils.train_test_split(Y)
 
 print('Nearest-Neighbor Prediction')
 
+# Y_train = Y_train[:500, :500]
+# Y_test = Y_test[:500, :500]
+
 X_nn = lab6.predict_ratings_nearest_neighbor(Y_train)
 
 rmse_train = utils.root_mean_squared_error(Y_train, X_nn)

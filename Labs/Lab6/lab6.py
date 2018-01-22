@@ -83,13 +83,13 @@ def predict_ratings_nearest_neighbor(user_to_movie_ratings, k=10):
         else:
             return 0.0
 
-    t_ar = np.loadtxt("array.txt")
-    # t_ar = []
+    # t_ar = np.loadtxt("array.txt")
+    t_ar = [[0]]
     if len(t_ar[0]) == number_of_users:
         S = t_ar
     else:
         for user_i in trange(number_of_users):
-            for user_j in range(user_i, number_of_users):
+            for user_j in range(user_i+1, number_of_users):
                 S[user_j, user_i] = S[user_i, user_j] = get_correlation(user_i, user_j)
         np.savetxt("array.txt", S)
     sorted_indexes = np.argsort(S)[:, ::-1]
@@ -102,11 +102,11 @@ def predict_ratings_nearest_neighbor(user_to_movie_ratings, k=10):
         for movie in range(number_of_movies):
             knn = get_k_nearest_user_indexes_rated_movie(sorted_indexes[user_a], k, movie)
             sum_down = np.sum(np.take(S[user_a], knn, axis=0))
-
-            sum_up = sum(
-                [S[user_a, user_b]*(user_to_movie_ratings[user_b, movie]
-                                    - np.average(user_to_movie_ratings[user_b, user_to_movie_ratings[user_b] > -1]))
-                 for user_b in knn])
+            sum_up = 0
+            for user_b in knn:
+                user_b_rts = user_to_movie_ratings[user_b]
+                sum_up += S[user_a, user_b]*(user_b_rts[movie]
+                                             - np.average(user_b_rts[user_b_rts > -1]))
             if sum_down != 0:
                 X[user_a, movie] = user_a_average_rating_all_movie + sum_up/sum_down
             else:
