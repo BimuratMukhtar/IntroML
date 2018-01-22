@@ -38,8 +38,12 @@ class NN:
             self.W2 - weights connecting hidden to output layer
             self.b2 - bias for output layer
         """
+        self.W1 = np.random.rand(self.n_input, self.n_hidden)
+        self.b1 = np.random.rand(self.n_hidden)
+        self.W2 = np.random.rand(self.n_hidden, self.n_output)
+        self.b2 = np.random.rand(self.n_output)
 
-        raise NotImplementedError
+
 
     def softmax(self, o):
         """Computes the softmax function for the array o.
@@ -52,8 +56,8 @@ class NN:
             A length n_output numpy array with the result of applying
             the softmax function to o.
         """
-
-        raise NotImplementedError
+        exp = np.exp(o)
+        return exp / np.sum(exp)
 
     def feed_forward(self, x):
         """Runs the network on a data point and outputs probabilities.
@@ -66,8 +70,12 @@ class NN:
             A length n_output numpy array containing the probabilities
             of each class according to the neural network.
         """
+        z = np.matmul(np.transpose(x), self.W1) + self.b1
+        a = np.tanh(z)
+        o = np.matmul(np.transpose(a), self.W2) + self.b2
+        p = self.softmax(o)
+        return p
 
-        raise NotImplementedError
 
     def predict(self, x):
         """Predicts the class of a data point.
@@ -80,8 +88,7 @@ class NN:
             A length n numpy array containing the predicted class
             for each data point.
         """
-
-        raise NotImplementedError
+        return np.argmax(self.feed_forward(x))
 
     def compute_accuracy(self, X, y):
         """Computes the accuracy of the network on data.
@@ -96,5 +103,5 @@ class NN:
         Returns:
             A float with the accuracy of the neural network.
         """
-
-        raise NotImplementedError
+        y_pred = [self.predict(row_x) for row_x in X]
+        return accuracy_score(y, y_pred)
