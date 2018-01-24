@@ -17,7 +17,11 @@ def build_single_layer_regression_model(n_hidden):
         neural network.
     """
 
-    raise NotImplementedError
+    model = Sequential()
+    model.add(Dense(input_dim=2, units=n_hidden, activation="tanh"))
+    model.add(Dense(units=1, activation="linear"))
+
+    return model
 
 def build_deep_regression_model(n_hidden, n_layers):
     """Builds a deep regression neural network.
@@ -36,4 +40,10 @@ def build_deep_regression_model(n_hidden, n_layers):
         A keras Sequential model with the deep neural network.
     """
 
-    raise NotImplementedError
+    model = Sequential()
+    model.add(Dense(input_dim=2, units=n_hidden, activation="tanh"))
+    for i in range(n_layers-1):
+        model.add(Dense(units=n_hidden, activation="tanh"))
+    model.add(Dense(units=1, activation="linear"))
+
+    return model

@@ -23,8 +23,14 @@ def build_model_fc(input_shape, num_classes):
     Returns:
         A fully connected keras model.
     """
+    model = Sequential()
+    model.add(Dense(input_shape=input_shape, units=512, activation="relu"))
+    model.add(Dropout(0.2))
+    model.add(Dense(units=512, activation="relu"))
+    model.add(Dropout(0.2))
+    model.add(Dense(units=num_classes, activation="softmax"))
 
-    raise NotImplementedError
+    return model
 
 #-------------------------------------------------------------------------------
 # Part 2 - Convolutional Neural Network
@@ -51,5 +57,13 @@ def build_model_conv(input_shape, num_classes):
     Returns:
         A convolutional keras model.
     """
+    model = Sequential()
+    model.add(Conv2D(32, (3, 3), input_shape=input_shape, activation="relu"))
+    model.add(Conv2D(64, (3, 3), activation="relu"))
+    model.add(MaxPooling2D((2, 2)))
+    model.add(Flatten())
+    model.add(Dense(units=128, activation="relu"))
+    model.add(Dropout(0.5))
+    model.add(Dense(units=num_classes, activation="softmax"))
 
-    raise NotImplementedError
+    return model
