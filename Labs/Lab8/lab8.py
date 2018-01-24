@@ -22,7 +22,11 @@ def keras_nn(n_input, n_hidden, n_output):
         A keras model with a single hidden layer for classification.
     """
 
-    raise NotImplementedError
+    model = Sequential()
+    model.add(Dense(units=n_hidden, input_dim=n_input, activation="relu"))
+    model.add(Dense(units=n_output, input_dim=n_hidden, activation="softmax"))
+
+    return model
 
 class NN:
     """A class representing a neural network with a single hidden layer for classification."""
@@ -162,8 +166,12 @@ class NN:
         Returns:
             A float with the loss of the neural network.
         """
+        n = X.shape[0]
+        P = self.feed_forward(X)
+        res = np.sum(np.log(P[range(n), y]))/n
+        return res
 
-        raise NotImplementedError
+
 
 #-------------------------------------------------------------------------------
 # Part 2 - Updating Weights
@@ -186,8 +194,24 @@ class NN:
         Y[range(n),y] = 1
 
         # YOUR CODE GOES HERE
+        z = np.dot(X, self.W1) + self.b1
+        a = np.tanh(z)
+        o = np.dot(a, self.W2) + self.b2
+        P = self.softmax(o)
 
-        raise NotImplementedError
+        delta_2 = P - Y
+        dL_dw2 = np.dot(np.transpose(a), delta_2)
+        dL_b2 = np.sum(delta_2, axis=0)
+
+        delta_1 = (1 - np.square(a)) * np.dot(delta_2, np.transpose(self.W2))
+        dL_dw1 = np.dot(np.transpose(X), delta_1)
+        dL_b1 = np.sum(delta_1, axis=0)
+
+        self.W2 = self.W2 - self.learning_rate*dL_dw2
+        self.W1 = self.W1 - self.learning_rate*dL_dw1
+
+        self.b2 = self.b2 - self.learning_rate*dL_b2
+        self.b1 = self.b1 - self.learning_rate*dL_b1
 
 #-------------------------------------------------------------------------------
 # Part 3 - Training
@@ -210,4 +234,10 @@ class NN:
                            every epoch.
         """
 
-        raise NotImplementedError
+        for epoch in range(num_epochs):
+            self.train_step(X, y)
+            if verbose:
+                compute_loss = self.compute_loss(X, y)
+                compute_accuracy = self.compute_accuracy(X, y)
+                print("loss is: ", str(compute_loss))
+                print("accuracy is: ", str(compute_accuracy))

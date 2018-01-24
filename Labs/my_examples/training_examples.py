@@ -14,4 +14,7 @@ arr = np.asarray(arr, float)
 arr = (arr-300)/100
 print(arr)
 print("result")
-print(arr[0 ,arr[0] > 0])
+# print(np.dot((arr[1] == arr[3]), arr[6]))
+r = []
+r = list(range(20))
+print(r)
