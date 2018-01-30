@@ -6,9 +6,10 @@ import numpy as np
 from sklearn.metrics import pairwise_distances_argmin
 from sklearn.metrics.pairwise import euclidean_distances
 
-#-------------------------------------------------------------------------------
+
+# -------------------------------------------------------------------------------
 # Part 1.2.1 - PCA from scratch
-#-------------------------------------------------------------------------------
+# -------------------------------------------------------------------------------
 
 class PCA:
     def __init__(self, n_components):
@@ -32,7 +33,12 @@ class PCA:
             The fitted PCA model.
         """
 
-        raise NotImplementedError
+        Z = (X - X.mean(axis=0)) / (X.std(axis=0) + (10 ** -6))
+        C = np.dot(Z.T, Z)
+        eig_value, self.Q = np.linalg.eig(C)
+        self.explained_variance_ratio_ = eig_value / sum(eig_value)
+
+        return self
 
     def transform(self, X):
         """Transforms the data into the top n_components principal components.
@@ -46,14 +52,18 @@ class PCA:
             each reduced to n_components principal components.
         """
 
-        raise NotImplementedError
+        Z = (X - X.mean(axis=0)) / (X.std(axis=0) + (10 ** -6))
+        Z_pc = np.dot(Z, self.Q)
+        Z_reduced = Z_pc[:, :self.n_components]
+        return Z_reduced
 
     def fit_transform(self, X):
         return self.fit(X).transform(X)
 
-#-------------------------------------------------------------------------------
+
+# -------------------------------------------------------------------------------
 # Part 2.1.1 - K-Means from scratch
-#-------------------------------------------------------------------------------
+# -------------------------------------------------------------------------------
 
 class KMeans:
     def __init__(self, n_clusters, n_iter):
@@ -77,8 +87,41 @@ class KMeans:
         Returns:
             The fitted KMeans model.
         """
+        np.random.seed(42)
 
-        raise NotImplementedError
+        n, d = X.shape
+
+        best_cost = float("inf")
+        best_cluster_centers = None
+
+        for _ in range(self.n_iter):
+            cluster_centers = X[np.random.choice(n, size=self.n_clusters, replace=False)]
+            prev_cost = float("inf")
+
+            while True:
+                cluster_assignments = pairwise_distances_argmin(cluster_centers, X, axis=0)
+
+                clusters = [X[np.where(cluster_assignments == cluster_num)] for cluster_num in range(self.n_clusters)]
+
+                cost = 0
+                for cluster_center, cluster in zip(cluster_centers, clusters):
+                    if len(cluster) > 0:
+                        cost += np.sum(euclidean_distances([cluster_center], cluster))
+
+                if prev_cost - cost < 1e-4:
+                    break
+                else:
+                    prev_cost = cost
+
+                cluster_centers = np.array([np.mean(cluster, axis=0) if len(cluster) > 0 else X[np.random.choice(n)]
+                                            for cluster in clusters])
+
+            if cost < best_cost:
+                best_cost = cost
+                best_cluster_centers = cluster_centers
+
+        self.cluster_centers_ = best_cluster_centers
+        return self
 
     def predict(self, X):
         """Predicts which clusters new data points belong to.
@@ -91,12 +134,13 @@ class KMeans:
             A length n numpy vector containing the predicted
             cluster for each data point.
         """
+        predictions = pairwise_distances_argmin(self.cluster_centers_, X, axis=0)
+        return predictions
 
-        raise NotImplementedError
 
-#-------------------------------------------------------------------------------
+# -------------------------------------------------------------------------------
 # Part 3.1 - Image reconstruction with autoencoders
-#-------------------------------------------------------------------------------
+# -------------------------------------------------------------------------------
 
 def build_autoencoder(original_dim, encoding_dim):
     """Builds an autoencoder model.
@@ -116,11 +160,17 @@ def build_autoencoder(original_dim, encoding_dim):
         A keras Model containing the autoencoder.
     """
 
-    raise NotImplementedError
+    input_img = Input(shape=(original_dim,))
+    encoded = Dense(encoding_dim, activation="relu")(input_img)
+    decoded = Dense(original_dim, activation="sigmoid")(encoded)
+    autoencoder = Model(input_img, decoded)
 
-#-------------------------------------------------------------------------------
+    return autoencoder
+
+
+# -------------------------------------------------------------------------------
 # Part 3.3 - Image generation with variational autoencoders
-#-------------------------------------------------------------------------------
+# -------------------------------------------------------------------------------
 
 def build_vae(batch_size, original_dim, intermediate_dim, latent_dim, epsilon_std):
     """Builds a variational autoencoder model.
