@@ -191,6 +191,39 @@ x_train_noisy, _, x_test_noisy, _ = utils.load_mnist(noisy=True)
 # Part 3.1 - Image reconstruction with autoencoders
 #-------------------------------------------------------------------------------
 
+# # Parameters
+# batch_size = 256
+# epochs = 50
+# original_dim = 784
+# encoding_dim = 32
+#
+# # Build autoencoder
+# autoencoder = lab10.build_autoencoder(original_dim, encoding_dim)
+#
+# # Compile autoencoder with loss function
+# autoencoder.compile(optimizer='adadelta', loss='binary_crossentropy')
+#
+# # Print autoencoder
+# autoencoder.summary()
+#
+# # Train autoencoder
+# autoencoder.fit(x_train, x_train,
+#                 epochs=epochs,
+#                 batch_size=batch_size,
+#                 shuffle=True,
+#                 validation_data=(x_test, x_test),
+#                 callbacks=[TensorBoard(log_dir='/tmp/autoencoder')])
+#
+# # Use autoencoder to reconstruct test images
+# reconstructed_imgs = autoencoder.predict(x_test)
+#
+# # Plot reconstructions
+# utils.plot_reconstructions(x_test, reconstructed_imgs, n=10)
+
+#-------------------------------------------------------------------------------
+# Part 3.2 - Image denoising with autoencoders
+#-------------------------------------------------------------------------------
+
 # Parameters
 batch_size = 256
 epochs = 50
@@ -207,51 +240,18 @@ autoencoder.compile(optimizer='adadelta', loss='binary_crossentropy')
 autoencoder.summary()
 
 # Train autoencoder
-autoencoder.fit(x_train, x_train,
+autoencoder.fit(x_train_noisy, x_train,
                 epochs=epochs,
                 batch_size=batch_size,
                 shuffle=True,
-                validation_data=(x_test, x_test),
-                callbacks=[TensorBoard(log_dir='/tmp/autoencoder')])
+                validation_data=(x_test_noisy, x_test),
+                callbacks=[TensorBoard(log_dir='/tmp/denoising')])
 
-# Use autoencoder to reconstruct test images
-reconstructed_imgs = autoencoder.predict(x_test)
+# Use autoencoder to denoise test images
+denoised_imgs = autoencoder.predict(x_test_noisy)
 
-# Plot reconstructions
-utils.plot_reconstructions(x_test, reconstructed_imgs, n=10)
-
-#-------------------------------------------------------------------------------
-# Part 3.2 - Image denoising with autoencoders
-#-------------------------------------------------------------------------------
-
-# # Parameters
-# batch_size = 256
-# epochs = 50
-# original_dim = 784
-# encoding_dim = 32
-
-# # Build autoencoder
-# autoencoder = lab10.build_autoencoder(original_dim, encoding_dim)
-
-# # Compile autoencoder with loss function
-# autoencoder.compile(optimizer='adadelta', loss='binary_crossentropy')
-
-# # Print autoencoder
-# autoencoder.summary()
-
-# # Train autoencoder
-# autoencoder.fit(x_train_noisy, x_train,
-#                 epochs=epochs,
-#                 batch_size=batch_size,
-#                 shuffle=True,
-#                 validation_data=(x_test_noisy, x_test),
-#                 callbacks=[TensorBoard(log_dir='/tmp/denoising')])
-
-# # Use autoencoder to denoise test images
-# denoised_imgs = autoencoder.predict(x_test_noisy)
-
-# # Plot denoised images
-# utils.plot_reconstructions(x_test_noisy, denoised_imgs, n=10)
+# Plot denoised images
+utils.plot_reconstructions(x_test_noisy, denoised_imgs, n=10)
 
 #-------------------------------------------------------------------------------
 # Part 3.3 - Image generation with variational autoencoders

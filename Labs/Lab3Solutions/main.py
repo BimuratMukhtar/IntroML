@@ -40,37 +40,37 @@ val_texts, val_labels = zip(*((sample['text'], sample['sentiment']) for sample i
 # Part 1.1 - Implementation
 #-------------------------------------------------------------------------------
 
-theta, theta_0 = lab3.pegasos(X, y, T=5, eta=0.01, lam=0.01)
-utils.plot_linear_classifier(X, y, theta, theta_0)
-plt.show()
+# theta, theta_0 = lab3.pegasos(X, y, T=5, eta=0.01, lam=0.01)
+# utils.plot_linear_classifier(X, y, theta, theta_0)
+# plt.show()
 
 #-------------------------------------------------------------------------------
 # Part 1.2 - Modifying hyperparameters
 #-------------------------------------------------------------------------------
 
-# Modify T
-Ts = [1, 5, 10, 15, 20, 25]
-for index, T in enumerate(Ts):
-    theta, theta_0 = lab3.pegasos(X, y, T=T, eta=0.01, lam=0.01)
-    subplot = int(str(int(math.ceil(math.sqrt(len(Ts))))) * 2 + str(index + 1))
-    utils.plot_linear_classifier(X, y, theta, theta_0, title='T = {}'.format(T), subplot=subplot)
-plt.show()
-
-# Modify eta
-etas = [10, 1, 0.1, 0.01, 0.001, 1e-4, 1e-5, 1e-6]
-for index, eta in enumerate(etas):
-    theta, theta_0 = lab3.pegasos(X, y, T=20, eta=eta, lam=0.01)
-    subplot = int(str(int(math.ceil(math.sqrt(len(etas))))) * 2 + str(index + 1))
-    utils.plot_linear_classifier(X, y, theta, theta_0, title='eta = {}'.format(eta), subplot=subplot)
-plt.show()
-
-# Modify lambda
-lams = [100, 10, 1, 0.1, 0.01, 0.001]
-for index, lam in enumerate(lams):
-    theta, theta_0 = lab3.pegasos(X, y, T=20, eta=0.01, lam=lam)
-    subplot = int(str(int(math.ceil(math.sqrt(len(lams))))) * 2 + str(index + 1))
-    utils.plot_linear_classifier(X, y, theta, theta_0, title='lambda = {}'.format(lam), subplot=subplot)
-plt.show()
+# # Modify T
+# Ts = [1, 5, 10, 15, 20, 25]
+# for index, T in enumerate(Ts):
+#     theta, theta_0 = lab3.pegasos(X, y, T=T, eta=0.01, lam=0.01)
+#     subplot = int(str(int(math.ceil(math.sqrt(len(Ts))))) * 2 + str(index + 1))
+#     utils.plot_linear_classifier(X, y, theta, theta_0, title='T = {}'.format(T), subplot=subplot)
+# plt.show()
+#
+# # Modify eta
+# etas = [10, 1, 0.1, 0.01, 0.001, 1e-4, 1e-5, 1e-6]
+# for index, eta in enumerate(etas):
+#     theta, theta_0 = lab3.pegasos(X, y, T=20, eta=eta, lam=0.01)
+#     subplot = int(str(int(math.ceil(math.sqrt(len(etas))))) * 2 + str(index + 1))
+#     utils.plot_linear_classifier(X, y, theta, theta_0, title='eta = {}'.format(eta), subplot=subplot)
+# plt.show()
+#
+# # Modify lambda
+# lams = [100, 10, 1, 0.1, 0.01, 0.001]
+# for index, lam in enumerate(lams):
+#     theta, theta_0 = lab3.pegasos(X, y, T=20, eta=0.01, lam=lam)
+#     subplot = int(str(int(math.ceil(math.sqrt(len(lams))))) * 2 + str(index + 1))
+#     utils.plot_linear_classifier(X, y, theta, theta_0, title='lambda = {}'.format(lam), subplot=subplot)
+# plt.show()
 
 #-------------------------------------------------------------------------------
 # Part 2 - SVM
@@ -80,29 +80,29 @@ plt.show()
 # Part 2.1 - SVM for generated data
 #-------------------------------------------------------------------------------
 
-clf = svm.SVC(kernel='linear')
-clf.fit(X, y)
-utils.plot_svm(X, y, clf)
-plt.show()
+# clf = svm.SVC(kernel='linear')
+# clf.fit(X, y)
+# utils.plot_svm(X, y, clf)
+# plt.show()
 
 #-------------------------------------------------------------------------------
 # Part 2.2 - SVM for sentiment analysis
 #-------------------------------------------------------------------------------
-
-pipeline = Pipeline([
-    ('vect', CountVectorizer()),
-    ('svm', svm.SVC(kernel='linear'))
-])
-pipeline.fit(train_texts, train_labels)
-
-train_predictions = pipeline.predict(train_texts)
-train_accuracy = metrics.accuracy_score(train_labels, train_predictions)
-
-val_predictions = pipeline.predict(val_texts)
-val_accuracy = metrics.accuracy_score(val_labels, val_predictions)
-
-print('SVM training accuracy = {}'.format(train_accuracy)) # 1.0000
-print('SVM validation accuracy = {}'.format(val_accuracy)) # 0.8629
+#
+# pipeline = Pipeline([
+#     ('vect', CountVectorizer()),
+#     ('svm', svm.SVC(kernel='linear'))
+# ])
+# pipeline.fit(train_texts, train_labels)
+#
+# train_predictions = pipeline.predict(train_texts)
+# train_accuracy = metrics.accuracy_score(train_labels, train_predictions)
+#
+# val_predictions = pipeline.predict(val_texts)
+# val_accuracy = metrics.accuracy_score(val_labels, val_predictions)
+#
+# print('SVM training accuracy = {}'.format(train_accuracy)) # 1.0000
+# print('SVM validation accuracy = {}'.format(val_accuracy)) # 0.8629
 
 #-------------------------------------------------------------------------------
 # Part 3 - Grid Search

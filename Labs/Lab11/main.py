@@ -34,9 +34,9 @@ action_size = env.action_space.n
 
 # # Initialize random agent
 # agent = lab11.RandomAgent(state_size, action_size)
-
+#
 # # Render agent playing game
-# utils.render_agent(env, agent, gif_path='random.gif')
+# utils.render_agent(env, agent, gif_path=None)
 
 #-------------------------------------------------------------------------------
 # Part 1.2 - Engineered Agent
@@ -44,7 +44,7 @@ action_size = env.action_space.n
 
 # # Initialize the engineered agent
 # agent = lab11.EngineeredAgent(state_size, action_size)
-
+#
 # # Render agent playing game
 # utils.render_agent(env, agent, gif_path='engineered.gif')
 
@@ -52,20 +52,20 @@ action_size = env.action_space.n
 # Part 1.3 - Deep Q-Network (DQN) Agent
 #-------------------------------------------------------------------------------
 
-# # Initialize DQN agent
-# agent = lab11.DQNAgent(state_size,
-#                        action_size,
-#                        memory_max,
-#                        gamma,
-#                        epsilon_init,
-#                        epsilon_decay,
-#                        epsilon_min,
-#                        hidden_size,
-#                        num_layers,
-#                        batch_size)
+# Initialize DQN agent
+agent = lab11.DQNAgent(state_size,
+                       action_size,
+                       memory_max,
+                       gamma,
+                       epsilon_init,
+                       epsilon_decay,
+                       epsilon_min,
+                       hidden_size,
+                       num_layers,
+                       batch_size)
 
-# # Train DQN agent
-# agent.train(env, episodes, render_frequency)
+# Train DQN agent
+agent.train(env, episodes, render_frequency)
 
-# # Render final agent playing game
-# utils.render_agent(env, agent, gif_path='dqn.gif')
+# Render final agent playing game
+utils.render_agent(env, agent, gif_path='dqn.gif')
